@@ -1,6 +1,8 @@
 package com.sursindmitry.crud.controller;
 
+import java.security.Principal;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
@@ -24,16 +26,15 @@ public class WebController {
         return "read-users";
     }
 
-    @GetMapping("/delete-user")
-    public String deleteUserPage() {
-
-        return "delete-user";
+    @GetMapping("/login")
+    public String login() {
+        return "login";
     }
 
-    @GetMapping("/update-user")
-    public String updateUserPage() {
-
-        return "update-user";
+    @GetMapping("/profile")
+    public String getProfile(Model model, Principal principal) {
+        model.addAttribute("name", principal.getName());
+        return "profile";
     }
 
 }
