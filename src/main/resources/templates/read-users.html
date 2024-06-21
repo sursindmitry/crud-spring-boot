@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Read users</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .container {
+            margin-top: 50px;
+        }
+
+        h1 {
+            margin-bottom: 30px;
+        }
+
+        table {
+            background-color: #ffffff;
+        }
+
+        thead {
+            background-color: #343a40;
+            color: #ffffff;
+        }
+
+        tbody tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        .table-bordered {
+            border: 1px solid #dee2e6;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1 class="text-center">Read users</h1>
+    <a href="/">Back</a>
+    <form id="getUserForm" class="mb-4">
+        <div class="input-group">
+            <input type="text" id="userId" name="userId" class="form-control" placeholder="Enter User ID" required>
+            <button type="submit" class="btn btn-primary">Get User By ID</button>
+        </div>
+    </form>
+    <table class="table table-bordered table-hover">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Surname</th>
+            <th>Email</th>
+        </tr>
+        </thead>
+        <tbody id="userTableBody">
+        <!-- Данные пользователей будут вставлены сюда -->
+        </tbody>
+    </table>
+</div>
+<script>
+    // Функция для отображения пользователей в таблице
+    function displayUsers(users) {
+        const userTableBody = document.getElementById('userTableBody');
+        userTableBody.innerHTML = users.map(user => `
+            <tr>
+                <td>${user.id}</td>
+                <td>${user.name}</td>
+                <td>${user.surname}</td>
+                <td>${user.email}</td>
+            </tr>
+        `).join('');
+    }
+
+    // Получение всех пользователей при загрузке страницы
+    window.onload = function() {
+        fetch('/read-all-users', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Network response was not ok: ${response.statusText}`);
+                }
+                return response.json();
+            })
+            .then(users => displayUsers(users))
+            .catch(error => {
+                const userTableBody = document.getElementById('userTableBody');
+                userTableBody.innerHTML = `
+                <tr>
+                    <td colspan="4" class="text-center text-danger">Error: ${error.message}</td>
+                </tr>
+            `;
+                console.error('There was a problem with the fetch operation:', error);
+            });
+    };
+
+    // Обработчик формы для получения пользователя по ID
+    document.getElementById('getUserForm').addEventListener('submit', function (event) {
+        event.preventDefault();
+        const userId = document.getElementById('userId').value;
+        fetch(`/read-user/${userId}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Network response was not ok: ${response.statusText}`);
+                }
+                return response.json();
+            })
+            .then(user => {
+                const userTableBody = document.getElementById('userTableBody');
+                userTableBody.innerHTML = `
+                <tr>
+                    <td>${user.id}</td>
+                    <td>${user.name}</td>
+                    <td>${user.surname}</td>
+                    <td>${user.email}</td>
+                </tr>
+            `;
+            })
+            .catch(error => {
+                const userTableBody = document.getElementById('userTableBody');
+                userTableBody.innerHTML = `
+                <tr>
+                    <td colspan="4" class="text-center text-danger">Error: ${error.message}</td>
+                </tr>
+            `;
+                console.error('There was a problem with the fetch operation:', error);
+            });
+    });
+</script>
+</body>
+</html>
