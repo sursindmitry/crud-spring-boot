@@ -32,20 +32,26 @@ public class SecurityConfig {
                     .requestMatchers(
                         "/",
                         "/login",
-                        "/logout")
-                    .permitAll()
+                        "/logout",
+                        "/v1/user/get-rest"
+                    ).permitAll()
 
                     .requestMatchers(
                         "/v1/admin/**",
                         "/create-user",
                         "/read-users",
                         "/delete-user",
-                        "/update-user").hasRole("ADMIN")
+                        "/update-user"
+                    ).hasRole("ADMIN")
 
-                    .requestMatchers("/v1/user").hasAnyRole("USER", "ADMIN")
+                    .requestMatchers(
+                        "/v1/user/profile",
+                        "/profile"
+                    ).hasAnyRole("USER", "ADMIN")
+
                     .requestMatchers("/v1/user/**").hasRole("USER")
 
-                    .requestMatchers("/profile").hasAnyRole("USER", "ADMIN")
+
                     .anyRequest().hasRole("ADMIN")
             )
 

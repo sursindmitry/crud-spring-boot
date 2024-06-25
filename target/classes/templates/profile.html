@@ -101,7 +101,7 @@
 </body>
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-        fetch('/v1/user')
+        fetch('/v1/user/profile')
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Ошибка сети');
